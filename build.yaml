@@ -7,3 +7,6 @@ include:
   - board: xiao_ble
     shield: settings_reset
     artifact-name: settings_reset-xiao_ble
+  - board: xiao_ble
+    shield: tester_xiao
+    artifact-name: tester_xiao
