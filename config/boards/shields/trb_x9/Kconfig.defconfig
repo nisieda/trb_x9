@@ -1,0 +1,6 @@
+if SHIELD_TRB_X9
+
+config ZMK_KEYBOARD_NAME
+    default "trb_x9"
+
+endif

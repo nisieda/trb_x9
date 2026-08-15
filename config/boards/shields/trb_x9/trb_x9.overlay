@@ -1,0 +1,121 @@
+
+#include <dt-bindings/zmk/matrix_transform.h>
+#include <input/processors.dtsi>
+#include <dt-bindings/zmk/input_transform.h>
+#include "trb_x9-layouts.dtsi"
+
+/ {
+    chosen {
+        zmk,physical-layout = &physical_layout0;
+    };
+
+    // xiao_ble only exposes 11 GPIO pins (D0-D10), and D8-D10 are already
+    // committed to the trackball's SPI bus below, leaving 8 pins (D0-D7).
+    // A 3x3 matrix (6 pins) + CS/IRQ (2 pins) uses exactly those 8, so the
+    // kscan matrix here is 3x3 (9 key positions total - see trb_x9-layouts.dtsi).
+    default_transform: keymap_transform_0 {
+        compatible = "zmk,matrix-transform";
+        columns = <3>;
+        rows = <3>;
+        map = <
+            RC(0,0) RC(0,1) RC(0,2)
+            RC(1,0) RC(1,1) RC(1,2)
+            RC(2,0) RC(2,1) RC(2,2)
+        >;
+    };
+
+    kscan0: kscan {
+        compatible = "zmk,kscan-gpio-matrix";
+        wakeup-source;
+
+        diode-direction = "col2row";
+        row-gpios
+            = <&xiao_d 0 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&xiao_d 1 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&xiao_d 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            ;
+        col-gpios
+            = <&xiao_d 3 GPIO_ACTIVE_HIGH>
+            , <&xiao_d 4 GPIO_ACTIVE_HIGH>
+            , <&xiao_d 5 GPIO_ACTIVE_HIGH>
+            ;
+    };
+
+    trackball_listener: trackball_listener {
+        compatible = "zmk,input-listener";
+        device = <&trackball>;
+        input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT) &rotate45>;
+
+        // While layer 3 is active (held via &mb3_scroll, see below), replace
+        // the normal cursor-move processors with the scroll mapper so the
+        // trackball drives vertical/horizontal scrolling instead.
+        scroller: scroller {
+            layers = <3>;
+            // zip_xy_to_scroll_mapper converts X/Y movement into
+            // scroll/h-scroll events; zip_scroll_scaler <multiplier> <divisor>
+            // then adjusts the resulting scroll speed. 1 2 = half speed;
+            // raise the first number or lower the second to scroll faster
+            // (e.g. 2 1 doubles it), and do the opposite to slow it down.
+            input-processors = <&zip_xy_to_scroll_mapper &zip_scroll_scaler 1 16>;
+        };
+    };
+
+    // Rotates trackball movement in 15-degree steps. The current step is
+    // shared runtime state, adjusted by &rotate_step (see rotate_step below).
+    rotate45: rotate45 {
+        compatible = "zmk,input-processor-rotate";
+        #input-processor-cells = <0>;
+    };
+
+    // Bind this in the keymap, e.g.:
+    //   &rotate_step 1   -> rotate cursor movement +15 degrees (clockwise)
+    //   &rotate_step (-1) -> rotate cursor movement -15 degrees (counter-clockwise)
+    rotate_step: rotate_step {
+        compatible = "zmk,behavior-rotate-step";
+        #binding-cells = <1>;
+        display-name = "Rotate Step";
+    };
+
+    // Tap = normal mouse click (param2, e.g. MB3). Hold = momentarily enable
+    // the given layer (param1) so the trackball scrolls instead of moving
+    // the cursor while held. Usage: &mb3_scroll 3 MB3
+    mb3_scroll: mb3_scroll {
+        compatible = "zmk,behavior-hold-tap";
+        #binding-cells = <2>;
+        tapping-term-ms = <200>;
+        flavor = "balanced";
+        bindings = <&mo>, <&mkp>;
+    };
+};
+
+&physical_layout0 {
+    kscan = <&kscan0>;
+    transform = <&default_transform>;
+};
+
+// D4/D5 default to i2c1 (SDA/SCL) and D6/D7 default to uart0 (TX/RX) on the
+// xiao_ble board. We don't need either peripheral - D4/D5 are reused above
+// as kscan columns, and D6/D7 below as the trackball's CS/IRQ lines - so
+// disable both to free the pins for plain GPIO use.
+&i2c1 {
+    status = "disabled";
+};
+
+&uart0 {
+    status = "disabled";
+};
+
+// xiao_spi (= &spi2) already has its SCK/MOSI/MISO wired to D8/D9/D10 via
+// the board's own pinctrl, so only cs-gpios needs to be added here.
+&xiao_spi {
+    status = "okay";
+    cs-gpios = <&xiao_d 6 GPIO_ACTIVE_LOW>;
+
+    trackball: trackball@0 {
+        status = "okay";
+        compatible = "pixart,paw3222";
+        reg = <0>;
+        spi-max-frequency = <2000000>;
+        irq-gpios = <&xiao_d 7 GPIO_ACTIVE_LOW>;
+    };
+};

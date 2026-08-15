@@ -1,0 +1,10 @@
+file_format: "1"
+id: trb_x9
+name: trb_x9
+type: shield
+features:
+  - keys
+  - studio
+outputs:
+  - usb
+  - ble

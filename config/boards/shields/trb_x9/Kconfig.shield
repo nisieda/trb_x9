@@ -1,0 +1,2 @@
+config SHIELD_TRB_X9
+    def_bool $(shields_list_contains,trb_x9)

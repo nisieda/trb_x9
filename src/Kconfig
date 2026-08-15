@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: MIT
+# Kconfig for trackball 15-degree rotation input processor + behavior
+
+config ZMK_INPUT_PROCESSOR_ROTATE
+    bool "Rotate trackball movement in 15-degree steps"
+    default y
+    depends on ZMK_POINTING
+    depends on INPUT
+    help
+      Enables an input processor that rotates relative X/Y pointer
+      movement in 24 discrete 15-degree steps. The current step is
+      shared global state, adjustable at runtime via the
+      zmk,behavior-rotate-step behavior.
+
+config ZMK_BEHAVIOR_ROTATE_STEP
+    bool "Behavior to adjust trackball rotation angle at runtime"
+    default y
+    depends on ZMK_INPUT_PROCESSOR_ROTATE
+    help
+      Enables a keymap behavior that steps the trackball rotation
+      angle by +-15 degrees (param1 = +1 for clockwise, -1 for
+      counter-clockwise) each time it is pressed.

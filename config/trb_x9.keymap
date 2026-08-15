@@ -1,0 +1,45 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/pointing.h>
+
+/ {
+    keymap {
+        compatible = "zmk,keymap";
+
+        base {
+            bindings = <
+&kp N0  &kp N1  &mb3_scroll 3 MB3  &kp N3  &kp N4  &kp N5
+&kp N6
+&kp N7
+&kp N8
+            >;
+        };
+
+        layer_1 {
+            bindings = <
+&trans  &kp LEFT  &kp SPACE  &kp RIGHT  &rotate_step (-1)  &rotate_step 1
+&trans
+&trans
+&trans
+            >;
+        };
+
+        layer_2 {
+            bindings = <
+&trans  &trans  &trans  &trans  &trans  &trans
+&trans
+&trans
+&trans
+            >;
+        };
+
+        layer_3 {
+            bindings = <
+&trans  &trans  &trans  &trans  &trans  &trans
+&trans
+&trans
+&trans
+            >;
+        };
+    };
+};

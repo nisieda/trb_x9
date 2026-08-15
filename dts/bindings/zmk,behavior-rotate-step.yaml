@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: MIT
+description: |
+  Steps the shared trackball rotation angle (see zmk,input-processor-rotate)
+  by +-15 degrees each time it is pressed. param1 is the direction:
+  1 = clockwise (+15 degrees), -1 = counter-clockwise (-15 degrees).
+
+compatible: "zmk,behavior-rotate-step"
+
+include: one_param.yaml

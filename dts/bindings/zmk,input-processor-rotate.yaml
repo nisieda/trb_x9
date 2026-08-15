@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: MIT
+description: |
+  Rotates relative pointer (trackball) X/Y movement in 15-degree steps.
+  There is a single shared rotation state (0-23, each step = 15 degrees)
+  used by all instances - adjust it at runtime with the
+  zmk,behavior-rotate-step behavior.
+
+compatible: "zmk,input-processor-rotate"
+
+properties:
+  "#input-processor-cells":
+    type: int
+    required: true
+    const: 0
+  track-remainders:
+    type: boolean
+    description: |
+      Whether to track fractional/remainder movement between events for this
+      processor instance. Not used by this processor, but must be declared
+      since ZMK's input-listener driver reads this property unconditionally
+      for every entry in an input-processors list.
+
+input-processor-cells:
+  []

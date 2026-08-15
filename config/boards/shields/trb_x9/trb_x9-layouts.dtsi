@@ -1,0 +1,19 @@
+
+#include <physical_layouts.dtsi>
+/ {
+    physical_layout0: physical_layout0 {
+        compatible = "zmk,physical-layout";
+        display-name = "Layout";
+        keys
+            = <&key_physical_attrs 100 100 250 25 0 0 0>
+			,<&key_physical_attrs 100 100 350 38 0 0 0>
+			,<&key_physical_attrs 100 100 450 50 0 0 0>
+			,<&key_physical_attrs 100 100 550 63 0 0 0>
+			,<&key_physical_attrs 100 100 650 75 0 0 0>
+			,<&key_physical_attrs 100 100 750 100 0 0 0>
+			,<&key_physical_attrs 100 100 200 125 0 0 0>
+			,<&key_physical_attrs 100 100 50 238 0 0 0>
+			,<&key_physical_attrs 100 100 50 338 0 0 0>
+            ;
+    };
+};
