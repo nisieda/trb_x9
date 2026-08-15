@@ -8,7 +8,7 @@
 
         base {
             bindings = <
-&kp N0  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5
+&kp N0  &kp N1  &mb3_scroll 3 MB3  &kp N3  &kp N4  &kp N5
 &kp N6
 &kp N7
 &kp N8

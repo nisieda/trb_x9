@@ -7,13 +7,6 @@
 / {
     chosen {
         zmk,physical-layout = &physical_layout0;
-        // Also set the legacy zmk,kscan chosen property, matching KARYL36's
-        // (working) overlay pattern. There are known ZMK bugs around the
-        // physical-layout-only kscan initialization path (e.g. upstream
-        // issue #2479: kscan drivers tied only to a physical-layout node
-        // can end up in a bad power-management/init state), so setting
-        // both may avoid whatever init-order issue is causing the matrix
-        // to stop responding after the very first keypress.
         zmk,kscan = &kscan0;
     };
 
@@ -37,13 +30,6 @@
         wakeup-source;
 
         diode-direction = "col2row";
-        // Reverted back to the original assignment (D0-D2 = rows/input,
-        // D3-D5 = cols/output). The swapped version (D0-D2 as outputs)
-        // produced complete silence, worse than this original version's
-        // one confirmed detection, so the swap is not the fix.
-        // Root cause is more likely interrupt-based matrix scanning not
-        // re-arming correctly on this MCU -- see CONFIG_ZMK_KSCAN_MATRIX_POLLING
-        // below in trb_x9.conf, which is the next thing being tested.
         row-gpios
             = <&xiao_d 0 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
             , <&xiao_d 1 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
@@ -56,10 +42,6 @@
             ;
     };
 
-    // TEMPORARILY DISABLED along with &xiao_spi/&trackball above (no physical
-    // sensor attached yet, and &trackball no longer resolves while xiao_spi
-    // is disabled). Re-enable this whole node once the trackball is wired up.
-    /*
     trackball_listener: trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
@@ -78,7 +60,6 @@
             input-processors = <&zip_xy_to_scroll_mapper &zip_scroll_scaler 1 16>;
         };
     };
-    */
 
     // Rotates trackball movement in 15-degree steps. The current step is
     // shared runtime state, adjusted by &rotate_step (see rotate_step below).
@@ -127,19 +108,8 @@
 
 // xiao_spi (= &spi2) already has its SCK/MOSI/MISO wired to D8/D9/D10 via
 // the board's own pinctrl, so only cs-gpios needs to be added here.
-//
-// TEMPORARILY DISABLED for kscan debugging: no physical trackball is wired
-// up yet, which leaves the irq-gpios line (D7) floating (it was also
-// missing a GPIO_PULL_UP flag, which needs to be added back once the
-// sensor is reconnected). A floating IRQ-configured input can fire
-// spurious interrupts continuously, which could easily be starving the
-// GPIO interrupt system / system workqueue that kscan also depends on.
-// Re-enable (with the pull-up added) once a physical PAW3222 is attached.
-&xiao_spi {
-    status = "disabled";
-};
-
-/*
+// irq-gpios has GPIO_PULL_UP added so the line doesn't float (and
+// potentially spam interrupts) before a physical sensor is attached.
 &xiao_spi {
     status = "okay";
     cs-gpios = <&xiao_d 6 GPIO_ACTIVE_LOW>;
@@ -152,4 +122,3 @@
         irq-gpios = <&xiao_d 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
     };
 };
-*/
