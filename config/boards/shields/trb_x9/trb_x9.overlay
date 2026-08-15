@@ -7,6 +7,14 @@
 / {
     chosen {
         zmk,physical-layout = &physical_layout0;
+        // Also set the legacy zmk,kscan chosen property, matching KARYL36's
+        // (working) overlay pattern. There are known ZMK bugs around the
+        // physical-layout-only kscan initialization path (e.g. upstream
+        // issue #2479: kscan drivers tied only to a physical-layout node
+        // can end up in a bad power-management/init state), so setting
+        // both may avoid whatever init-order issue is causing the matrix
+        // to stop responding after the very first keypress.
+        zmk,kscan = &kscan0;
     };
 
     // xiao_ble only exposes 11 GPIO pins (D0-D10), and D8-D10 are already
