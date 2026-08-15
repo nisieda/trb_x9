@@ -29,19 +29,22 @@
         wakeup-source;
 
         diode-direction = "col2row";
-        // Swapped vs. the original assignment: D0-D2 are now the driven
-        // columns and D3-D5 the pulled-down rows. (D0/D1 are confirmed
-        // reliable as driven outputs on this board from testing with other
-        // firmware; the row/input role seems to behave better on D3-D5.)
+        // Reverted back to the original assignment (D0-D2 = rows/input,
+        // D3-D5 = cols/output). The swapped version (D0-D2 as outputs)
+        // produced complete silence, worse than this original version's
+        // one confirmed detection, so the swap is not the fix.
+        // Root cause is more likely interrupt-based matrix scanning not
+        // re-arming correctly on this MCU -- see CONFIG_ZMK_KSCAN_MATRIX_POLLING
+        // below in trb_x9.conf, which is the next thing being tested.
         row-gpios
-            = <&xiao_d 3 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&xiao_d 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&xiao_d 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            = <&xiao_d 0 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&xiao_d 1 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&xiao_d 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
             ;
         col-gpios
-            = <&xiao_d 0 GPIO_ACTIVE_HIGH>
-            , <&xiao_d 1 GPIO_ACTIVE_HIGH>
-            , <&xiao_d 2 GPIO_ACTIVE_HIGH>
+            = <&xiao_d 3 GPIO_ACTIVE_HIGH>
+            , <&xiao_d 4 GPIO_ACTIVE_HIGH>
+            , <&xiao_d 5 GPIO_ACTIVE_HIGH>
             ;
     };
 
