@@ -29,15 +29,19 @@
         wakeup-source;
 
         diode-direction = "col2row";
+        // Swapped vs. the original assignment: D0-D2 are now the driven
+        // columns and D3-D5 the pulled-down rows. (D0/D1 are confirmed
+        // reliable as driven outputs on this board from testing with other
+        // firmware; the row/input role seems to behave better on D3-D5.)
         row-gpios
-            = <&xiao_d 0 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&xiao_d 1 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&xiao_d 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            = <&xiao_d 3 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&xiao_d 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&xiao_d 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
             ;
         col-gpios
-            = <&xiao_d 3 GPIO_ACTIVE_HIGH>
-            , <&xiao_d 4 GPIO_ACTIVE_HIGH>
-            , <&xiao_d 5 GPIO_ACTIVE_HIGH>
+            = <&xiao_d 0 GPIO_ACTIVE_HIGH>
+            , <&xiao_d 1 GPIO_ACTIVE_HIGH>
+            , <&xiao_d 2 GPIO_ACTIVE_HIGH>
             ;
     };
 
