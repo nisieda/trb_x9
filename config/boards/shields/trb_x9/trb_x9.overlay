@@ -56,6 +56,10 @@
             ;
     };
 
+    // TEMPORARILY DISABLED along with &xiao_spi/&trackball above (no physical
+    // sensor attached yet, and &trackball no longer resolves while xiao_spi
+    // is disabled). Re-enable this whole node once the trackball is wired up.
+    /*
     trackball_listener: trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
@@ -74,6 +78,7 @@
             input-processors = <&zip_xy_to_scroll_mapper &zip_scroll_scaler 1 16>;
         };
     };
+    */
 
     // Rotates trackball movement in 15-degree steps. The current step is
     // shared runtime state, adjusted by &rotate_step (see rotate_step below).
@@ -122,6 +127,19 @@
 
 // xiao_spi (= &spi2) already has its SCK/MOSI/MISO wired to D8/D9/D10 via
 // the board's own pinctrl, so only cs-gpios needs to be added here.
+//
+// TEMPORARILY DISABLED for kscan debugging: no physical trackball is wired
+// up yet, which leaves the irq-gpios line (D7) floating (it was also
+// missing a GPIO_PULL_UP flag, which needs to be added back once the
+// sensor is reconnected). A floating IRQ-configured input can fire
+// spurious interrupts continuously, which could easily be starving the
+// GPIO interrupt system / system workqueue that kscan also depends on.
+// Re-enable (with the pull-up added) once a physical PAW3222 is attached.
+&xiao_spi {
+    status = "disabled";
+};
+
+/*
 &xiao_spi {
     status = "okay";
     cs-gpios = <&xiao_d 6 GPIO_ACTIVE_LOW>;
@@ -131,6 +149,7 @@
         compatible = "pixart,paw3222";
         reg = <0>;
         spi-max-frequency = <2000000>;
-        irq-gpios = <&xiao_d 7 GPIO_ACTIVE_LOW>;
+        irq-gpios = <&xiao_d 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
     };
 };
+*/
