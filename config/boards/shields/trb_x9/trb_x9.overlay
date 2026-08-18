@@ -2,6 +2,7 @@
 #include <dt-bindings/zmk/matrix_transform.h>
 #include <input/processors.dtsi>
 #include <dt-bindings/zmk/input_transform.h>
+#include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
 #include "trb_x9-layouts.dtsi"
 
 / {
@@ -106,12 +107,39 @@
     status = "disabled";
 };
 
-// xiao_spi (= &spi2) already has its SCK/MOSI/MISO wired to D8/D9/D10 via
-// the board's own pinctrl, so only cs-gpios needs to be added here.
-// irq-gpios has GPIO_PULL_UP added so the line doesn't float (and
-// potentially spam interrupts) before a physical sensor is attached.
+// The board's default xiao_spi pinctrl wires MOSI and MISO to separate
+// physical pins (D10 and D9). Most PAW3222 breakout modules only expose a
+// single bidirectional SDIO data line instead of separate MOSI/MISO, so we
+// override the pinctrl here to point BOTH MOSI and MISO at the same pin
+// (D9 = gpio1 14). SCK stays on D8 (gpio1 13); D10 (gpio1 15) is left
+// unused/free as a result.
+&pinctrl {
+    spi2_sdio_default: spi2_sdio_default {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
+                    <NRF_PSEL(SPIM_MOSI, 1, 14)>,
+                    <NRF_PSEL(SPIM_MISO, 1, 14)>;
+        };
+    };
+
+    spi2_sdio_sleep: spi2_sdio_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
+                    <NRF_PSEL(SPIM_MOSI, 1, 14)>,
+                    <NRF_PSEL(SPIM_MISO, 1, 14)>;
+            low-power-enable;
+        };
+    };
+};
+
+// xiao_spi (= &spi2). cs-gpios stays on D6. irq-gpios has GPIO_PULL_UP
+// added so the line doesn't float (and potentially spam interrupts)
+// before a physical sensor is attached.
 &xiao_spi {
     status = "okay";
+    pinctrl-0 = <&spi2_sdio_default>;
+    pinctrl-1 = <&spi2_sdio_sleep>;
+    pinctrl-names = "default", "sleep";
     cs-gpios = <&xiao_d 6 GPIO_ACTIVE_LOW>;
 
     trackball: trackball@0 {
