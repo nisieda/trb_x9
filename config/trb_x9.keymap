@@ -17,7 +17,7 @@
 
         layer_1 {
             bindings = <
-&trans  &kp LEFT  &kp SPACE  &kp RIGHT  &rotate_step  &rotate_step 1
+&trans  &kp LEFT  &kp SPACE  &kp RIGHT  &rotate_step (-1)  &rotate_step 1
 &trans
 &trans
 &trans
