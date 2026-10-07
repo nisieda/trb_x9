@@ -8,16 +8,16 @@
 
         base {
             bindings = <
-&kp N0  &mkp MB1  &mkp MB3  &mkp MB2  &kp N4  &kp N5
+&kp N0    &mkp MB1  &mkp MB3  &mkp MB2  &kp N4  &kp N5
 &kp N6
 &kp N7
-&kp N8
+&lt 1 N8
             >;
         };
 
         layer_1 {
             bindings = <
-&trans  &kp LEFT  &kp SPACE  &kp RIGHT  &rotate_step (-1)  &rotate_step 1
+&trans  &kp LEFT  &kp SPACE  &kp RIGHT  &rotate_step  &rotate_step 1
 &trans
 &trans
 &trans
@@ -34,6 +34,15 @@
         };
 
         layer_3 {
+            bindings = <
+&trans  &trans  &trans  &trans  &trans  &trans
+&trans
+&trans
+&trans
+            >;
+        };
+
+        layer_4 {
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans
 &trans
