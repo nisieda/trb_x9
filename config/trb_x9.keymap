@@ -8,7 +8,7 @@
 
         base {
             bindings = <
-&kp N0    &mkp MB1  &mb3_scroll 3 MB3  &mkp MB2  &kp N4  &kp N5
+&kp N0    &kp J     &kp K              &kp L     &kp N4  &kp N5
 &kp N2
 &lt 2 N3
 &lt 1 N4
@@ -42,9 +42,11 @@
             >;
         };
 
+        // Auto mouse layer: enabled automatically while the trackball moves
+        // (see mouse_temp_layer in trb_x9.overlay).
         layer_4 {
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans
+&trans  &mkp MB1  &mb3_scroll 3 MB3  &mkp MB2  &trans  &trans
 &trans
 &trans
 &trans
