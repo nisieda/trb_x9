@@ -98,7 +98,7 @@
 
 // D4/D5 default to i2c1 (SDA/SCL) and D6/D7 default to uart0 (TX/RX) on the
 // xiao_ble board. We don't need either peripheral - D4/D5 are reused above
-// as kscan columns, and D6/D7 below as the trackball's CS/IRQ lines - so
+// as kscan columns, and D6 below as the trackball's MOTION (IRQ) line - so
 // disable both to free the pins for plain GPIO use.
 &i2c1 {
     status = "disabled";
@@ -133,21 +133,22 @@
     };
 };
 
-// xiao_spi (= &spi2). cs-gpios stays on D6. irq-gpios has GPIO_PULL_UP
-// added so the line doesn't float (and potentially spam interrupts)
-// before a physical sensor is attached.
+// xiao_spi (= &spi2).
+// On this PCB the sensor's CS pin is tied to GND (2-wire SPI mode), so
+// there is no cs-gpios. MOTION is wired to D6 (J2 pin 3).
+// irq-gpios has GPIO_PULL_UP so the line doesn't float when no sensor is
+// attached.
 &xiao_spi {
     status = "okay";
     pinctrl-0 = <&spi2_sdio_default>;
     pinctrl-1 = <&spi2_sdio_sleep>;
     pinctrl-names = "default", "sleep";
-    cs-gpios = <&xiao_d 6 GPIO_ACTIVE_LOW>;
 
     trackball: trackball@0 {
         status = "okay";
         compatible = "pixart,paw3222";
         reg = <0>;
-        spi-max-frequency = <2000000>;
-        irq-gpios = <&xiao_d 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        spi-max-frequency = <1000000>;
+        irq-gpios = <&xiao_d 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
     };
 };
