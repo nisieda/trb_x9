@@ -3,21 +3,30 @@
 #include <dt-bindings/zmk/pointing.h>
 
 / {
+    combos {
+        compatible = "zmk,combos";
+
+        boot {
+            bindings = <&bootloader>;
+            key-positions = <0 1 2 3>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
         base {
             bindings = <
-&kp N0    &kp J     &kp K              &kp L     &kp N4  &kp N5
-&kp N2
-&lt 2 N3
-&lt 1 N4
+&kp H                &kp J  &kp K  &kp L  &kp N4  &kp N5
+&kp N
+&lt 2 LC(PG_UP)
+&lt 1 LC(PAGE_DOWN)
             >;
         };
 
         layer_1 {
             bindings = <
-&trans  &kp LEFT  &kp SPACE  &kp RIGHT  &rotate_step (-1)  &rotate_step 1 
+&trans  &kp LEFT  &kp SPACE  &kp RIGHT  &rotate_step  &rotate_step 1
 &trans
 &trans
 &trans
@@ -26,7 +35,7 @@
 
         layer_2 {
             bindings = <
-&trans  &rotate_step (-1)  &trans  &rotate_step 1   &trans  &trans
+&trans  &rotate_step  &trans  &rotate_step 1  &trans  &trans
 &trans
 &trans
 &trans
@@ -44,9 +53,19 @@
 
         // Auto mouse layer: enabled automatically while the trackball moves
         // (see mouse_temp_layer in trb_x9.overlay).
+
         layer_4 {
             bindings = <
-&trans  &mkp MB1  &mb3_scroll 3 MB3  &mkp MB2  &trans  &trans
+&mkp MB5  &mkp MB1  &mb3_scroll 3 MB3  &mkp MB2  &trans  &trans
+&mkp MB4
+&trans
+&trans
+            >;
+        };
+
+        layer_5 {
+            bindings = <
+&trans  &trans  &trans  &trans  &trans  &trans
 &trans
 &trans
 &trans
