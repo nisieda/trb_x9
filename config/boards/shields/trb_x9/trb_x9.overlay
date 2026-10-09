@@ -59,7 +59,7 @@
             // then adjusts the resulting scroll speed. 1 2 = half speed;
             // raise the first number or lower the second to scroll faster
             // (e.g. 2 1 doubles it), and do the opposite to slow it down.
-            input-processors = <&zip_xy_to_scroll_mapper &zip_scroll_scaler 1 16>;
+            input-processors = <&zip_xy_to_scroll_mapper &zip_scroll_scaler 1 32>;
         };
     };
 
@@ -148,7 +148,7 @@
         status = "okay";
         compatible = "pixart,paw3222";
         reg = <0>;
-        spi-max-frequency = <1000000>;
+        spi-max-frequency = <2000000>;
         irq-gpios = <&xiao_d 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
     };
 };
