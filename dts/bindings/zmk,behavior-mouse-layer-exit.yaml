@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: MIT
+description: |
+  Turns `layer` off `delay-ms` after the last key bound to this behavior is
+  released. Pressing it again before then cancels the turn-off. Meant to be
+  combined with mouse buttons (in a macro) inside the auto mouse layer.
+
+compatible: "zmk,behavior-mouse-layer-exit"
+
+include: zero_param.yaml
+
+properties:
+  layer:
+    type: int
+    required: true
+    description: Layer index to turn off.
+  delay-ms:
+    type: int
+    default: 300
+    description: Delay after release before the layer is turned off.

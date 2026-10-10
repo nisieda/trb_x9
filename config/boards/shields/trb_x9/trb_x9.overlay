@@ -47,7 +47,7 @@
     trackball_listener: trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
-        input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT) &rotate45 &mouse_temp_layer 4 500>;
+        input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT) &rotate45 &mouse_temp_layer 4 0>;
 
         // While layer 3 is active (held via &mb3_scroll, see below), replace
         // the normal cursor-move processors with the scroll mapper so the
@@ -63,14 +63,16 @@
         };
     };
 
-    // Auto mouse layer. Moving the trackball enables layer 4 (mouse buttons
-    // on the J/K/L keys); it turns off again 500 ms after the ball stops
-    // (2nd parameter of &mouse_temp_layer above - raise it for more time to
-    // click). Pressing any key other than positions 1-3 turns it off at once.
+    // Auto mouse layer. Moving the trackball enables layer 4 (mouse buttons).
+    // The 2nd parameter of &mouse_temp_layer above is 0 = no timeout, so the
+    // layer stays on until either:
+    //  - a mouse button is clicked: it turns off shortly after the release
+    //    (&mlx in the keymap, delay-ms), or
+    //  - any key other than the mouse buttons (positions 0-3, 6) is pressed.
     mouse_temp_layer: mouse_temp_layer {
         compatible = "zmk,input-processor-temp-layer";
         #input-processor-cells = <2>;
-        excluded-positions = <1 2 3>;
+        excluded-positions = <0 1 2 3 6>;
     };
 
     // Rotates trackball movement in 15-degree steps. The current step is
@@ -89,15 +91,17 @@
         display-name = "Rotate Step";
     };
 
-    // Tap = normal mouse click (param2, e.g. MB3). Hold = momentarily enable
-    // the given layer (param1) so the trackball scrolls instead of moving
-    // the cursor while held. Usage: &mb3_scroll 3 MB3
+    // Tap = mouse click (param2, e.g. MB3). Hold = momentarily enable the
+    // given layer (param1) so the trackball scrolls instead of moving the
+    // cursor while held. Usage: &mb3_scroll 3 MB3
+    // Both sides go through the &mo_x / &mbx macros (defined in the keymap)
+    // so that using them also ends the auto mouse layer afterwards.
     mb3_scroll: mb3_scroll {
         compatible = "zmk,behavior-hold-tap";
         #binding-cells = <2>;
         tapping-term-ms = <150>;
         flavor = "balanced";
-        bindings = <&mo>, <&mkp>;
+        bindings = <&mo_x>, <&mbx>;
     };
 };
 
