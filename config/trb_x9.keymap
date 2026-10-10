@@ -54,6 +54,15 @@
             bindings = <&bootloader>;
             key-positions = <0 1 2 3>;
         };
+
+        // Mouse layer only: &mb3_scroll (pos 2) + &mbx MB2 (pos 3) together
+        // = plain MB3 press
+        mb3_combo {
+            bindings = <&mkp MB3>;
+            key-positions = <2 3>;
+            layers = <4>;
+            timeout-ms = <50>;
+        };
     };
 
     keymap {
@@ -61,7 +70,7 @@
 
         base {
             bindings = <
-&kp H                &kp J  &kp K  &kp L  &kp N4  &kp N5
+&kp H                &kp J  &kp K  &lt 4 L  &kp N4  &kp N5
 &kp N
 &lt 2 LC(PG_UP)
 &lt 1 LC(PAGE_DOWN)
